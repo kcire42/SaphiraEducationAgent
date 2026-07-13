@@ -1,0 +1,1 @@
+#El punto de entrada de la aplicación FastAPI. Inicializa el servidor.

@@ -1,0 +1,1 @@
+#Modelos ORM (ej. SQLAlchemy) para guardar usuarios y logs de chat en SQL.

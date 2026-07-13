@@ -1,0 +1,1 @@
+#Lógica para conectarse a la API de Claude/Anthropic (manejo de prompts y streaming).
