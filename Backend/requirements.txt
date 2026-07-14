@@ -1,0 +1,8 @@
+google-genai
+python-dotenv
+langchain-text-splitters
+langchain-community
+qdrant-client
+pypdf
+fastapi
+uvicorn[standard]

@@ -1,2 +1,47 @@
 ###Orquesta todos los contenedores del proyecto (Levanta tu API, Qdrant y 
 ###la base de datos SQL con un solo comando).
+version: '3.8'
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${postgres_username}
+      POSTGRES_PASSWORD: ${postgres_password}
+      POSTGRES_DB: ${postgres_database}
+    ports:
+      - "5433:5432" # Cambiar a 5432 si no hay conflictos con otros servicios PostgreSQL en tu máquina
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+  api:
+    build: ./Backend
+    container_name: api
+    env_file:
+      - ./Backend/.env
+    environment:
+      - APP_ENV=docker # Define el entorno de la aplicacion como "docker"
+      # - POSTGRES_USER=${postgres_username}
+      # - POSTGRES_PASSWORD=${postgres_password}
+      # - POSTGRES_DB=${postgres_database}
+      # - POSTGRES_HOST=postgres
+      # - POSTGRES_PORT=5432
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+    ports:
+      - "8000:8000"
+    depends_on:
+      - qdrant
+      - postgres
+    restart: unless-stopped
+volumes:
+  qdrant_data:
+  postgres_data:
