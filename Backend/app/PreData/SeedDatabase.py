@@ -121,6 +121,7 @@ def seed(route, collection_name):
     print(f"Embeddings generados: {len(embeddings)}")
     insert_into_qdrant(collection_name, chunks, embeddings)
     print(f"Proceso de seed completado para la colección '{collection_name}'.")
+    return {"status": "seed_completed", "collection": collection_name, "total_chunks": len(chunks)}
 
 
 if __name__ == "__main__":

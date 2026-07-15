@@ -25,6 +25,33 @@ def get_embedding(
         task_type: "retrieval_document" para chunks indexados,
             "retrieval_query" para la pregunta del usuario.
     """
+
+    """
+    retrieval_document (La "Huella" del Contenido)
+    Se utiliza durante la fase de Ingesta (Indexing).
+
+    Propósito: Transformar tus documentos (chunks) en vectores que representan su significado semántico.
+
+    ¿Qué sucede aquí? Cuando procesas un texto largo, lo divides en trozos (chunks). 
+    Cada uno pasa por un modelo de embedding para crear un vector.
+
+    El objetivo: Que Qdrant entienda de qué trata ese fragmento de información. 
+    Es el material que quedará almacenado en tu base de datos esperando ser consultado.
+
+    retrieval_query (El "Espejo" de la Pregunta)
+    Se utiliza durante la fase de Consulta (Querying).
+
+    Propósito: Transformar la pregunta del usuario en un vector que coincida con los vectores de los documentos.
+
+    ¿Qué sucede aquí? Cuando el usuario escribe una pregunta, debes usar exactamente el mismo modelo de 
+    embedding que usaste para los documentos. Si usaste text-embedding-3-small para los chunks, 
+    debes usar text-embedding-3-small para la pregunta.
+
+    El objetivo: Traducir la intención del usuario al "espacio vectorial". 
+    Al hacer esto, el vector de la pregunta quedará "cerca" 
+    (matemáticamente hablando, por similitud de coseno) de los vectores de los documentos 
+    que contienen la respuesta.
+    """
     api_model = _resolve_api_model(model_name)
     client = genai.Client(api_key=os.getenv("API_KEY_Gemini"))
 

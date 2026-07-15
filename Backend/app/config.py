@@ -26,6 +26,12 @@ class Settings:
         },
     }
     MODELS_EMBEDDINGS = list(MODELS_EMBEDDINGS_REGISTRY.keys())
+    MODELS_LLM_REGISTRY = {
+        'gemini-3.1-flash-lite': {'api_model': 'gemini-3.1-flash-lite'},
+        'gemini-3.1-flash': {'api_model': 'gemini-3.1-flash'}, 
+        'gemini-3.1': {'api_model': 'gemini-3.1'},
+        'gemini-3.1-turbo': {'api_model': 'gemini-3.1-turbo'}}
+    MODELS_LLM = list(MODELS_LLM_REGISTRY.keys())
     QDRANT_URL = os.getenv(
         "QDRANT_URL", 
         "http://qdrant:6333" if ENV == "docker" else "http://localhost:6333"
