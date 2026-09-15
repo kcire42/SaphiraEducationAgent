@@ -50,8 +50,7 @@ def build_prompt(promptTemplate:str ,question: str, context_chunks: list[str]) -
 
 
 
-
-def answer_question(question: str, promptTemplate: str, collection_name: str = "temario", top_k: int = 5) -> dict:
+def answer_question(question: str, promptTemplate: str = PROMPT_TEMPLATE, collection_name: str = "temario", top_k: int = 5) -> dict:
     """
     Pipeline completo de RAG: recupera contexto de Qdrant y genera la respuesta con el LLM.
     """
