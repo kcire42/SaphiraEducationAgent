@@ -1,13 +1,17 @@
 #Lógica para conectarse a la API de Claude/Anthropic (manejo de prompts y streaming).
 from google import genai
 from google.genai import types
-from dotenv import load_dotenv
 from app.config import settings 
 import os
 
-load_dotenv()
 
 def _resolve_api_model(model_name: str) -> str:
+    """
+    Resuelve el nombre del modelo a su identificador de API correspondiente.
+    Args:
+        model_name (str): Nombre del modelo a resolver.
+    Returns:
+        str: Identificador del modelo en la API."""
     model_info = settings.MODELS_LLM_REGISTRY.get(model_name)
     if not model_info:
         raise ValueError(f"Model '{model_name}' not found in registry.")
@@ -24,7 +28,7 @@ def callLLM_Cloud(prompt:str, model_name: str = "gemini-3.1-flash-lite") -> str:
         str: La respuesta generada por el modelo de lenguaje.
     """
     try:
-        client = genai.Client(api_key=os.getenv("API_KEY_Gemini"))
+        client = genai.Client(api_key=settings.API_KEY_GEMINI)
         model_id = _resolve_api_model(model_name)
         response = client.models.generate_content(
             model=model_id,

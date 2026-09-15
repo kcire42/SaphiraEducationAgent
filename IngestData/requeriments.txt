@@ -1,0 +1,7 @@
+yt-dlp
+ffmpeg
+tqdm
+openai-whisper
+psycopg2-binary
+dotenv
+httpx

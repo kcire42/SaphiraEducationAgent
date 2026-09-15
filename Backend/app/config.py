@@ -1,10 +1,9 @@
 import os 
 from pathlib import Path
+from dotenv import load_dotenv
 
 
-#BASE_DIR = Path(__file__).resolve().parent.parent
-
-
+load_dotenv()
 
 class Settings:
     ENV = os.getenv("APP_ENV", "local")
@@ -25,6 +24,7 @@ class Settings:
             "api_model": "gemini-embedding-001",
         },
     }
+    API_KEY_GEMINI = os.getenv("API_KEY_Gemini")
     MODELS_EMBEDDINGS = list(MODELS_EMBEDDINGS_REGISTRY.keys())
     MODELS_LLM_REGISTRY = {
         'gemini-3.1-flash-lite': {'api_model': 'gemini-3.1-flash-lite'},
@@ -36,4 +36,5 @@ class Settings:
         "QDRANT_URL", 
         "http://qdrant:6333" if ENV == "docker" else "http://localhost:6333"
     )
+    
 settings = Settings()

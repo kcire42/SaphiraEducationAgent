@@ -2,6 +2,7 @@
 ###la base de datos SQL con un solo comando).
 version: '3.8'
 services:
+# Vector database service
   qdrant:
     image: qdrant/qdrant:latest
     container_name: qdrant
@@ -10,6 +11,7 @@ services:
     volumes:
       - qdrant_data:/qdrant/storage
     restart: unless-stopped
+#Database service
   postgres:
     image: postgres:15
     container_name: postgres
@@ -17,11 +19,32 @@ services:
       POSTGRES_USER: ${postgres_username}
       POSTGRES_PASSWORD: ${postgres_password}
       POSTGRES_DB: ${postgres_database}
+    healthcheck: 
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     ports:
       - "127.0.0.1:5433:5432" # Solo accesible desde el propio servidor, no desde la tailnet
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+  
+  ingest_data:
+    build: 
+      context: ./IngestData
+      dockerfile: Dockerfile
+    container_name: IngestData
+    env_file:
+      - ./IngestData/.env
+    depends_on:
+        - postgres
+        - api
+    volumes:
+      - ./IngestData:/app 
+    restart: unless-stopped
+
+  # API service
   api:
     build: ./Backend
     container_name: api
@@ -42,6 +65,7 @@ services:
       - qdrant
       - postgres
     restart: unless-stopped
+  # Nginx service is for reverse proxying the API and serving static files
   nginx:
     image: nginx:alpine
     container_name: nginx

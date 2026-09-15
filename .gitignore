@@ -1,4 +1,5 @@
 .env
 venv
 *.csv
+.DS_Store
 Backend/app/Data/

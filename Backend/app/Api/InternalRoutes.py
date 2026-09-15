@@ -1,7 +1,7 @@
 #Maneja los WebSockets para el chat en tiempo real con el estudiante.
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from fastapi.concurrency import run_in_threadpool
-from app.Services.RagService import answer_question
+
 
 chatRouter = APIRouter()
 

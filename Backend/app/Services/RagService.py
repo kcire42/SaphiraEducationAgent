@@ -40,20 +40,23 @@ def retrieve_context(question: str, collection_name: str = "temario", top_k: int
     return [point.payload["text"] for point in results.points]
 
 
-def build_prompt(question: str, context_chunks: list[str]) -> str:
+def build_prompt(promptTemplate:str ,question: str, context_chunks: list[str]) -> str:
     """
     Arma el prompt final combinando el contexto recuperado y la pregunta.
     """
     context = "\n\n---\n\n".join(context_chunks) if context_chunks else "(sin contexto disponible)"
-    return PROMPT_TEMPLATE.format(context=context, question=question)
+    return promptTemplate.format(context=context, question=question)
 
 
-def answer_question(question: str, collection_name: str = "temario", top_k: int = 5) -> dict:
+
+
+
+def answer_question(question: str, promptTemplate: str, collection_name: str = "temario", top_k: int = 5) -> dict:
     """
     Pipeline completo de RAG: recupera contexto de Qdrant y genera la respuesta con el LLM.
     """
     context_chunks = retrieve_context(question, collection_name=collection_name, top_k=top_k)
-    prompt = build_prompt(question, context_chunks)
+    prompt = build_prompt(promptTemplate, question=question, context_chunks=context_chunks)
     response = callLLM_Cloud(prompt)
     response["context"] = context_chunks
     return response

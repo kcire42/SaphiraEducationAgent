@@ -124,5 +124,5 @@ def seed(route, collection_name):
     return {"status": "seed_completed", "collection": collection_name, "total_chunks": len(chunks)}
 
 
-if __name__ == "__main__":
-    seed("app/Data/How_AI_Ruined_the_Classroom.txt", "temario")
+#if __name__ == "__main__":
+#    seed("app/Data/How_AI_Ruined_the_Classroom.txt", "temario")
