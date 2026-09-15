@@ -30,6 +30,18 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
   
+  flyway:
+    image: flyway/flyway:latest
+    container_name: flyway_DB
+    command: >
+      -url=jdbc:postgresql://postgres:5432/${postgres_database}
+      -user=${postgres_username}
+      -password=${postgres_password}
+      -locations=filesystem:/flyway/sql/Tables,filesystem:/flyway/sql/StoreProcedures,filesystem:/flyway/sql/Functions,filesystem:/flyway/sql/Views,filesystem:/flyway/sql/Triggers
+      migrate
+    volumes:
+      - ./Database:/flyway/sql
+
   ingest_data:
     build: 
       context: ./IngestData
@@ -39,6 +51,7 @@ services:
       - ./IngestData/.env
     depends_on:
         - postgres
+        - flyway
         - api
     volumes:
       - ./IngestData:/app 
@@ -64,6 +77,7 @@ services:
     depends_on:
       - qdrant
       - postgres
+      - flyway
     restart: unless-stopped
   # Nginx service is for reverse proxying the API and serving static files
   nginx:
