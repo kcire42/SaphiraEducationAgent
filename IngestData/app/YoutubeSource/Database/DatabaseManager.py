@@ -8,7 +8,6 @@ import json
 
 
 
-
 def get_connection():
     print(f"→ Estableciendo conexión a {settings.DB_HOST}, base: {settings.DB_NAME}")
     conn = psycopg2.connect(

@@ -93,3 +93,4 @@ services:
 volumes:
   qdrant_data:
   postgres_data:
+
