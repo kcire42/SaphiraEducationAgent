@@ -46,7 +46,7 @@ services:
     build: 
       context: ./IngestData
       dockerfile: Dockerfile
-    container_name: IngestData
+    container_name: ingest_data
     env_file:
       - ./IngestData/.env
     depends_on:

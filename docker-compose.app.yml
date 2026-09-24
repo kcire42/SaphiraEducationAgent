@@ -1,0 +1,64 @@
+services:
+  flyway:
+    image: flyway/flyway:latest
+    container_name: flyway_DB
+    command: >
+      -url=jdbc:postgresql://postgres:5432/${postgres_database}
+      -user=${postgres_username}
+      -password=${postgres_password}
+      -locations=filesystem:/flyway/sql/Tables,filesystem:/flyway/sql/StoreProcedures,filesystem:/flyway/sql/Functions,filesystem:/flyway/sql/Views,filesystem:/flyway/sql/Triggers
+      migrate
+    volumes:
+      - ./Database:/flyway/sql
+    networks:
+      - saphira_network
+
+  api:
+    build: ./Backend
+    container_name: api
+    env_file:
+      - ./Backend/.env
+    environment:
+      - APP_ENV=docker
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+    expose:
+      - "8000"
+    depends_on:
+      - flyway
+    networks:
+      - saphira_network
+    restart: unless-stopped
+
+  ingest_data:
+    build: 
+      context: ./IngestData
+      dockerfile: Dockerfile
+    container_name: ingest_data
+    env_file:
+      - ./IngestData/.env
+    depends_on:
+      - flyway
+      - api
+    volumes:
+      - ./IngestData:/app 
+    networks:
+      - saphira_network
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - saphira_network
+    restart: unless-stopped
+
+networks:
+  saphira_network:
+    external: true

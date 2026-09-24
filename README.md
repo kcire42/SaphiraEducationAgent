@@ -38,3 +38,8 @@ Es una Plataforma Educativa Inteligente (EdTech) donde los estudiantes interact√
     2. Usa un Jupyter Notebook para limpiar los datos y entrenar tu modelo predictivo.
 
     3. Crea un nuevo endpoint en FastAPI /predict-risk que eval√∫e a un usuario y devuelva su riesgo.
+
+Como ejecutar en test-env
+docker network create saphira_network
+docker compose -f docker-compose.data.yml up -d
+docker compose -f docker-compose.app.yml up -d --build
