@@ -3,7 +3,7 @@ CREATE OR REPLACE PROCEDURE youtube.error_youtube_ingestion(IN p_video_id text, 
 AS $procedure$
 BEGIN
     -- 1. Actualizar error en tabla 
-    INSERT INTO "youtube".procesamiento (video_id, status, last_update)
+    INSERT INTO "youtube".processing (video_id, status, last_update)
     VALUES (p_video_id, 'error', NOW())
     ON CONFLICT (video_id) DO UPDATE 
     SET status = EXCLUDED.status, last_update = NOW();

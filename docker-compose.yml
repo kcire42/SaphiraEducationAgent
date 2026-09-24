@@ -13,7 +13,7 @@ services:
     restart: unless-stopped
 #Database service
   postgres:
-    image: postgres:15
+    image: pgvector/pgvector:pg15
     container_name: postgres
     environment:
       POSTGRES_USER: ${postgres_username}
@@ -45,7 +45,7 @@ services:
   ingest_data:
     build: 
       context: ./IngestData
-      dockerfile: Dockerfile
+      dockerfile: DockerFile
     container_name: ingest_data
     env_file:
       - ./IngestData/.env
