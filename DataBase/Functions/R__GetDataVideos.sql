@@ -11,7 +11,7 @@ BEGIN
         a2.video_duration,
         a2.video_view_count,
         a2.channel_id
-    FROM "youtube".procesamiento as a1
+    FROM "youtube".processing as a1
     INNER JOIN "youtube".videos as a2
     ON a1.video_id = a2.video_id
     -- ✅ Cambiamos esto: casteamos el parámetro al tipo de la columna

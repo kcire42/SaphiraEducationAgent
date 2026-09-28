@@ -98,7 +98,11 @@ if __name__ == "__main__":
         for video in processed_videos:
             video_id,*_ = video
             logger.debug(f"→ Resumiendo: {video_id}")
-            video_content = get_video_content(video_id) 
+            video_content = get_video_content(video_id)
+            if not video_content:
+                error_youtube_ingestion(video_id, "Error: No se pudo obtener el contenido del video.")
+                logger.error(f"❌ Error: No se pudo obtener el contenido del video {video_id}.")
+                continue
             logger.debug(f"✅ Contenido del video {video_content.get('transcription')[:30]}...")
             if video_content.get('transcription'):
                 summary = asyncio.run(get_summary_from_llm(video_content.get('transcription')))

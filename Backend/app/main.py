@@ -2,6 +2,7 @@
 from fastapi import FastAPI, Request
 from app.Api.Utilities import utilitiesRouter
 from app.Api.ChatRoutes import chatRouter
+from app.Api.InternalRoutes import internalChatRouter
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 
@@ -14,7 +15,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(utilitiesRouter)
-app.include_router(chatRouter)
+app.include_router(internalChatRouter)
+app.include_router(internalChatRouter, prefix="/internal")  # Prefijo para rutas internas
 
 
 logger = logging.getLogger(__name__)

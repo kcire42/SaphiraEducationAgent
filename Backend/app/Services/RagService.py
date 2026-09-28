@@ -61,4 +61,13 @@ def answer_question(question: str, promptTemplate: str = PROMPT_TEMPLATE, collec
     return response
 
 
+def internal_answer_question(question:str, promptTemplate:str) -> dict:
+    """
+    Pipeline de RAG interno: genera la respuesta con el LLM sin recuperar contexto de Qdrant.
+    """
+    prompt = build_prompt(promptTemplate, question=question, context_chunks=[])
+    response = callLLM_Cloud(prompt)
+    return response
+
+
 

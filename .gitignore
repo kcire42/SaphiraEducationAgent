@@ -3,3 +3,6 @@ venv
 *.csv
 .DS_Store
 Backend/app/Data/
+*.pt
+*.mp3
+*.info.json

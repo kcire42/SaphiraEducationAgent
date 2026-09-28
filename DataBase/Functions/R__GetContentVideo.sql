@@ -7,7 +7,7 @@ BEGIN
     SELECT
     a1.video_id,
     a1.transcripcion
-    FROM "youtube".contenido as a1
+    FROM "youtube".content as a1
     where a1.video_id = p_video_id;
 END;
 $function$
