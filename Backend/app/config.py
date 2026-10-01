@@ -36,5 +36,6 @@ class Settings:
         "QDRANT_URL", 
         "http://qdrant:6333" if ENV == "docker" else "http://localhost:6333"
     )
+    TYPESAFE_API_KEY= os.getenv("TYPESAFE_API_KEY")
     
 settings = Settings()

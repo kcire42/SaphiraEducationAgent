@@ -6,3 +6,5 @@ Backend/app/Data/
 *.pt
 *.mp3
 *.info.json
+*.pyc
+*.json
