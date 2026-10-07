@@ -13,7 +13,7 @@ class Settings:
     DATA_DIR = Path(os.getenv("DATA_DIR", "/app/data"))
     MODELS_DIR = Path(os.getenv("MODELS_DIR", "/app/models"))
     MODEL_WHISPER = os.getenv("MODEL_WHISPER", "base")
-    API_WS_URL = os.getenv("API_WS_URL", "ws://api:8000/ws/internal/chat")
+    API_WS_URL = os.getenv("API_WS_URL", "ws://api:8000/ws/llm")
 
 
 settings = Settings()
