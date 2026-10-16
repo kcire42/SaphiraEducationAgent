@@ -12,17 +12,17 @@ Si el contexto no tiene la respuesta, dilo explícitamente en vez de inventar.
 """
 
 
-def retrieve_context(question: str, collection_name: str = "temario", top_k: int = 5) -> list[str]:
+def retrieve_context(query: str, collection_name: str = "temario", top_k: int = 5) -> list[str]:
     """
     Vectoriza la pregunta y busca en Qdrant los chunks más relevantes.
 
     Args:
-        question: Pregunta del estudiante.
+        query: Pregunta del estudiante.
         collection_name: Colección de Qdrant donde buscar.
         top_k: Cantidad de chunks a recuperar.
     """
     # Defino el vector de la pregunta usando el mismo modelo de embedding que se usó para los documentos.
-    query_vector = get_embedding(question, task_type="retrieval_query")
+    query_vector = get_embedding(query, task_type="retrieval_query")
     # Conecto con Qdrant y busco los chunks más cercanos al vector de la pregunta.
     client = QdrantClient(url=settings.QDRANT_URL) 
     results = client.query_points(

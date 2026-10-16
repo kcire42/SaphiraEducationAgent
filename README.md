@@ -43,3 +43,6 @@ Como ejecutar en test-env
 docker network create saphira_network
 docker compose -f docker-compose.data.yml up -d
 docker compose -f docker-compose.app.yml up -d --build
+
+Correr pruebas de script en docker 
+docker exec -it ingest_data python -m app.main

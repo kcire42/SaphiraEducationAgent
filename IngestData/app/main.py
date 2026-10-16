@@ -3,7 +3,7 @@ from app.YoutubeSource.Services.TranscriptionService import transcribe_audio
 from app.YoutubeSource.Database.DatabaseManager import *
 from app.YoutubeSource.IntegrityData.IntegrityData import validate_video_metadata
 from app.YoutubeSource.Services.SummaryServices import get_summary_from_llm
-import asyncio
+from app.YoutubeSource.Services.CategoryServices import get_category_from_jev
 import logging
 
 
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     logger.debug("🚀 Iniciando el proceso de ingestión de videos de YouTube...")
-    youtube_channel = 'https://www.youtube.com/@Platzi'
+    youtube_channel = 'https://www.youtube.com/@MeDicenDai'
     # 1. INGESTIÓN: Obtener y registrar videos nuevos
     videos_channel = get_videos_from_youtube_channel(youtube_channel, current_start=1, batch_size=3)
     if not videos_channel:
@@ -105,7 +105,7 @@ if __name__ == "__main__":
                 continue
             logger.debug(f"✅ Contenido del video {video_content.get('transcription')[:30]}...")
             if video_content.get('transcription'):
-                summary = asyncio.run(get_summary_from_llm(video_content.get('transcription')))
+                summary = get_summary_from_llm(video_content.get('transcription'))
                 if summary:
                     logger.debug(f"✅ Resumen del video {summary}...")
                     summary_status = summary_youtube_ingestion(video_id, summary)
@@ -121,6 +121,39 @@ if __name__ == "__main__":
                 error_youtube_ingestion(video_id, "Error: No se encontró transcripción para resumir.")
                 logger.error(f"❌ Error: No se encontró transcripción para resumir.")
 
+
+    #Crear categoría del video
+    category_videos = db_get_videos_by_status('summary')
+    if len(category_videos) == 0:
+        logger.debug("✅ No hay videos pendientes de categorización.")
+    else:
+        logger.debug(f"✅ Videos listos para categorización: {len(category_videos)}, details: {category_videos}")
+        for video in category_videos:
+            video_id,*_ = video
+            logger.debug(f"→ Categorizando: {video_id}")
+            video_content = get_video_content(video_id)
+            if not video_content:
+                error_youtube_ingestion(video_id, "Error: No se pudo obtener el contenido del video.")
+                logger.error(f"❌ Error: No se pudo obtener el contenido del video {video_id}.")
+                continue
+            logger.debug(f"✅ Contenido del video {video_content.get('summary')[:30]}...")
+            if video_content.get('summary'):
+                category = get_category_from_jev(video_content.get('summary'),video_id)
+                print(f"✅ Categoría obtenida del JEV Service: {category}")
+                if category:
+                    logger.debug(f"✅ Categoría del video {category}...")
+                    # category_status = category_youtube_ingestion(video_id, category)
+                    # if category_status:
+                    #     logger.debug(f"✅ Categoría guardada y estado actualizado.")
+                    # else:
+                    #     error_youtube_ingestion(video_id, "Error al guardar categoría en DB.")
+                    #     logger.error(f"❌ Error al guardar categoría en DB.")
+                else:
+                    error_youtube_ingestion(video_id, "Error al obtener categoría del JEV Service.")
+                    logger.error(f"❌ Error al obtener categoría del JEV Service.")
+            else:
+                error_youtube_ingestion(video_id, "Error: No se encontró resumen para categorizar.")
+                logger.error(f"❌ Error: No se encontró resumen para categorizar.")
 
     logger.debug("🏁 Proceso completado.")
 

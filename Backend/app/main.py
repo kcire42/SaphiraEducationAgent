@@ -2,7 +2,7 @@
 from fastapi import FastAPI, Request
 from app.Api.Utilities import utilitiesRouter
 
-from Backend.app.Api.WebSocketLLMRoutes import WSLLMRouter
+from app.Api.WebSocketLLMRoutes import WSLLMRouter
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 
