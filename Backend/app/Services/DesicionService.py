@@ -39,7 +39,8 @@ def callSimpleSystemOneJev(idAnswer:str,type:str,state:str,instructions:str,crit
             },
         )
         print(f"Received response from TypeSafe API: {response}")
-        return response
+        # SystemOneResponse es un modelo Pydantic; se convierte a dict para poder enviarlo por WebSocket
+        return response.model_dump(mode="json")
     except Exception as e:
         return {
             "error": str(e),

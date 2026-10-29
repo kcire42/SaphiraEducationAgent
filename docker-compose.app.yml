@@ -1,6 +1,6 @@
 services:
   flyway:
-    image: flyway/flyway:latest
+    image: flyway/flyway:13.7.0
     container_name: flyway_DB
     command: >
       -url=jdbc:postgresql://postgres:5432/${postgres_database}
@@ -9,7 +9,7 @@ services:
       -locations=filesystem:/flyway/sql/Tables,filesystem:/flyway/sql/StoreProcedures,filesystem:/flyway/sql/Functions,filesystem:/flyway/sql/Views,filesystem:/flyway/sql/Triggers
       migrate
     volumes:
-      - ./Database:/flyway/sql
+      - ./DataBase:/flyway/sql
     networks:
       - saphira_network
 
@@ -47,7 +47,7 @@ services:
     restart: unless-stopped
 
   nginx:
-    image: nginx:alpine
+    image: nginx:1.31.6-alpine
     container_name: nginx
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro

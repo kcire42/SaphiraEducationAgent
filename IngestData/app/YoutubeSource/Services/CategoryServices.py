@@ -19,9 +19,13 @@ def get_category_from_jev(summary: str,videoID: str) -> str:
         str: La categoría determinada por el modelo de lenguaje.
     """
     try:
-        # Ejecuta la función asincrónica ask_internal_llm en un bucle de eventos
-        category = asyncio.run(ask_descion_system_one_jev(id_answer=videoID, question_type="choice", state=summary, instructions=query, criteria={}))
-        return category
+        # Ejecuta la función asincrónica ask_descion_system_one_jev en un bucle de eventos
+        response = asyncio.run(ask_descion_system_one_jev(id_answer=videoID, question_type="Choice", state=summary, instructions=query, criteria=criteria))
+        if response.get("error"):
+            print(f"Error devuelto por JEV: {response['error']}")
+            return None
+        # Respuesta esperada: {"answers": {videoID: {"type": "choice", "choice": "...", "confidence": ..., "probabilities": {...}}}}
+        return response["answers"][videoID]["choice"]
     except Exception as e:
         print(f"Error al obtener categoria de JEV: {e}")
         return None

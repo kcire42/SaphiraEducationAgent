@@ -297,6 +297,29 @@ def error_youtube_ingestion(video_id, error_message):
     finally:
         conn.close()
 
+def category_youtube_ingestion(video_id, category):
+    print(f"Inciando proceso de categorización de videos")
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""CALL 
+                        "youtube".category_youtube_ingestion(
+                        p_video_id := %s::text,
+                        p_category := %s::text
+                        )""",(
+                        video_id, 
+                        str(category)
+                            ))
+        conn.commit()
+        print(f"✅ Proceso de categorización de videos completado.")
+        return True
+    except Exception as e:
+        print(f"❌ Error al procesar categorización de videos: {e}")
+        conn.rollback()
+        return False
+    finally:
+        conn.close()
+
 
 # flow text:
 # pending -> downloaded -> validate -> processed -> summary -> vector -> learning -> completed 

@@ -15,6 +15,7 @@ class Settings:
     MODEL_WHISPER = os.getenv("MODEL_WHISPER", "base")
     API_WS_URL = os.getenv("API_WS_URL", "ws://api:8000/ws/llm")
     API_WS_URL_DECISION = os.getenv("API_WS_URL_DECISION", "ws://api:8000/ws/decision")
+    LOG_LEVEL = os.getenv("LOG_LEVEL", "DEBUG")
 
 
 settings = Settings()

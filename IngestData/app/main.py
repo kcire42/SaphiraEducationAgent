@@ -4,10 +4,14 @@ from app.YoutubeSource.Database.DatabaseManager import *
 from app.YoutubeSource.IntegrityData.IntegrityData import validate_video_metadata
 from app.YoutubeSource.Services.SummaryServices import get_summary_from_llm
 from app.YoutubeSource.Services.CategoryServices import get_category_from_jev
+from app.config import settings
 import logging
 
 
+# Las librerías externas quedan en INFO; el nivel del pipeline se controla con LOG_LEVEL
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
+logger.setLevel(settings.LOG_LEVEL)
 
 if __name__ == "__main__":
     logger.debug("🚀 Iniciando el proceso de ingestión de videos de YouTube...")
@@ -103,8 +107,8 @@ if __name__ == "__main__":
                 error_youtube_ingestion(video_id, "Error: No se pudo obtener el contenido del video.")
                 logger.error(f"❌ Error: No se pudo obtener el contenido del video {video_id}.")
                 continue
-            logger.debug(f"✅ Contenido del video {video_content.get('transcription')[:30]}...")
             if video_content.get('transcription'):
+                logger.debug(f"✅ Contenido del video {video_content.get('transcription')[:30]}...")
                 summary = get_summary_from_llm(video_content.get('transcription'))
                 if summary:
                     logger.debug(f"✅ Resumen del video {summary}...")
@@ -136,18 +140,18 @@ if __name__ == "__main__":
                 error_youtube_ingestion(video_id, "Error: No se pudo obtener el contenido del video.")
                 logger.error(f"❌ Error: No se pudo obtener el contenido del video {video_id}.")
                 continue
-            logger.debug(f"✅ Contenido del video {video_content.get('summary')[:30]}...")
             if video_content.get('summary'):
+                logger.debug(f"✅ Contenido del video {video_content.get('summary')[:30]}...")
                 category = get_category_from_jev(video_content.get('summary'),video_id)
                 print(f"✅ Categoría obtenida del JEV Service: {category}")
                 if category:
                     logger.debug(f"✅ Categoría del video {category}...")
-                    # category_status = category_youtube_ingestion(video_id, category)
-                    # if category_status:
-                    #     logger.debug(f"✅ Categoría guardada y estado actualizado.")
-                    # else:
-                    #     error_youtube_ingestion(video_id, "Error al guardar categoría en DB.")
-                    #     logger.error(f"❌ Error al guardar categoría en DB.")
+                    category_status = category_youtube_ingestion(video_id, category)
+                    if category_status:
+                        logger.debug(f"✅ Categoría guardada y estado actualizado.")
+                    else:
+                        error_youtube_ingestion(video_id, "Error al guardar categoría en DB.")
+                        logger.error(f"❌ Error al guardar categoría en DB.")
                 else:
                     error_youtube_ingestion(video_id, "Error al obtener categoría del JEV Service.")
                     logger.error(f"❌ Error al obtener categoría del JEV Service.")
