@@ -1,5 +1,8 @@
 from app.Api.InternalComunication import ask_internal_llm
 import asyncio
+import logging
+
+logger = logging.getLogger(__name__)
 
 prompt_template = """
 Rol:Eres un asistente especializado en síntesis y extracción de conocimiento de transcripciones de videos.
@@ -16,20 +19,19 @@ Resumen:"""
 query = "Genera un resumen fiel, denso en información y sin redundancias del contenido provisto."
 
 
-
-def get_summary_from_llm(contentVideo: str) -> str:
-    """
-    Obtiene un resumen del texto proporcionado utilizando un modelo de lenguaje interno a través de WebSocket.
-    Args:
-        text (str): El texto que se desea resumir.
-        prompt_template (str): La plantilla de prompt para guiar la generación del resumen.
-    Returns:
-        str: El resumen generado por el modelo de lenguaje.
-    """
-    try:
-        # Ejecuta la función asincrónica ask_internal_llm en un bucle de eventos
-        summary = asyncio.run(ask_internal_llm(query=query, prompt_template=prompt_template, content=contentVideo))
-        return summary
-    except Exception as e:
-        print(f"Error al obtener resumen del LLM: {e}")
-        return None
+def get_summary_from_llm(contentVideo: str) -> str | None:
+	"""
+	Obtiene un resumen del texto proporcionado utilizando un modelo de lenguaje interno a través de WebSocket.
+	Args:
+		text (str): El texto que se desea resumir.
+		prompt_template (str): La plantilla de prompt para guiar la generación del resumen.
+	Returns:
+		str: El resumen generado por el modelo de lenguaje.
+	"""
+	try:
+		# Ejecuta la función asincrónica ask_internal_llm en un bucle de eventos
+		summary = asyncio.run(ask_internal_llm(query=query, prompt_template=prompt_template, content=contentVideo))
+		return summary
+	except Exception:
+		logger.exception("Error al obtener resumen del LLM")
+		return None

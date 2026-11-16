@@ -1,0 +1,1 @@
+ALTER TABLE youtube.content ADD COLUMN category_confidence FLOAT DEFAULT 0.0;

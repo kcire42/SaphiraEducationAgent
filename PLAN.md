@@ -60,10 +60,10 @@ Estados: ✅ completada · 🚧 en curso · ⏳ pendiente
 - [x] `/ws/decision` devuelve la respuesta de JEV como JSON (`model_dump`) y se extrae solo el nombre de la categoría.
 - [x] Conectar `category_youtube_ingestion` en `IngestData/app/main.py`.
 - [x] Probar la categorización de punta a punta en Docker (6 videos categorizados, 0 errores).
-- [ ] Ampliar las categorías de `CategoryServices.py`: agregar al menos "Series/Cine" y "Tecnología/IA" (hoy un video de Better Call Saul cae en *Psychology* y los de IA en *News*).
-- [ ] Guardar la `confidence` de JEV: migración `V10` con la columna `category_confidence` en `youtube.content`, nuevo parámetro `p_category_confidence` en `category_youtube_ingestion` y en su wrapper.
-- [ ] Usar la confidence: los videos por debajo de un umbral (por ejemplo, 0.6) se marcan para revisión manual.
-- [ ] Script para regresar un video a un estado anterior y reprocesarlo desde ahí (cualquier etapa, no solo `category`):
+- [x] Ampliar las categorías de `CategoryServices.py`: agregar al menos "Series/Cine" y "Tecnología/IA" (hoy un video de Better Call Saul cae en *Psychology* y los de IA en *News*).
+- [x] Guardar la `confidence` de JEV: migración `V10` con la columna `category_confidence` en `youtube.content`, nuevo parámetro `p_category_confidence` en `category_youtube_ingestion` y en su wrapper.
+- [x] Usar la confidence: los videos por debajo de un umbral (por ejemplo, 0.6) se marcan para revisión manual.
+- [x] Script para regresar un video a un estado anterior y reprocesarlo desde ahí (cualquier etapa, no solo `category`):
   - SP `youtube.reset_youtube_ingestion(p_video_id, p_status)` en `R__ResetYoutubeIngestion.sql`. Valida que el video exista y que el estado destino sea anterior al actual (el enum es ordenado, así que basta con comparar con `<`). También permite salir de `error`.
   - Wrapper `reset_youtube_ingestion(video_id, status)` en `DatabaseManager.py`.
   - CLI `docker exec ingest_data python -m app.reset_video --video-id <id> [--video-id <id> ...] --status <estado>`, que muestra el estado anterior y el nuevo.
