@@ -1,6 +1,6 @@
 # PLAN — Saphira, asistente personal de IA
 
-**Última actualización:** 2026-10-28
+**Última actualización:** 2026-11-15
 
 Estados: ✅ completada · 🚧 en curso · ⏳ pendiente
 
@@ -153,6 +153,26 @@ Objetivo: practicar visión por computadora con **modelos propios en TensorFlow 
 - [ ] Experimentos registrados en MLflow; exportar a ONNX o TFLite (este último sirve para correr en el teléfono en la Fase 13).
 - [ ] Servir los modelos: TorchServe / TF Serving o un servicio FastAPI propio; entrenamiento con GPU en EC2 (Fase 10).
 - [ ] Probar desde `/docs` o desde la mensajería (Fase 11); la cámara del teléfono se integra en la Fase 13.
+
+**Submódulo de video: secuencias de frames con PyTorch puro**
+- [ ] Además de las imágenes estáticas de apuntes y documentos, clasificar secuencias de video o frames (por ejemplo, fragmentos de los videos de YouTube ya ingeridos o grabaciones de pizarrón).
+- [ ] Modelo: Vision Transformer (ViT) para frames y **VideoMAE** para clips.
+- [ ] Bucle de entrenamiento escrito a mano en PyTorch puro (sin Lightning, `Trainer` de Hugging Face ni otros wrappers): `DataLoader`, forward, loss, `backward`, optimizador, scheduler, early stopping y checkpoints.
+- [ ] Precisión mixta con `torch.amp` (`autocast` + `GradScaler`) y comparación de memoria y velocidad contra FP32.
+
+**Aprendizaje auto-supervisado con pocas etiquetas**
+- [ ] Conjunto de imágenes y videos sin etiquetar de documentos o rostros.
+- [ ] Pre-entrenar el encoder con **SimCLR** (contrastivo) o **MAE** (reconstrucción enmascarada).
+- [ ] Fine-tuning con solo el **10 % de las etiquetas** y demostrar que supera al mismo modelo entrenado de forma supervisada desde cero (curvas y métricas en MLflow).
+- [ ] Splits con **`GroupKFold`** agrupados por documento o sujeto, para que ningún documento o persona aparezca en train y en test a la vez, con una prueba que verifique cero *data leakage*.
+
+**Optimización de inferencia**
+- [ ] Además de exportar a ONNX, cuantizar a **FP16** e **INT8** con ONNX Runtime (cuantización dinámica y estática con datos de calibración).
+- [ ] Benchmark formal de latencia (**p50, p95, p99**), con calentamiento y número fijo de iteraciones, comparando PyTorch FP32 contra ONNX INT8; reportar también la pérdida de precisión y el tamaño del modelo.
+
+**Fine-tuning con LoRA / QLoRA del clasificador de categorías**
+- [ ] Experimento corto: ajustar un modelo de lenguaje pequeño con **LoRA / QLoRA** (`peft` + `bitsandbytes`) para clasificar los resúmenes en categorías, usando como etiquetas las ya guardadas por `CategoryServices` (JEV).
+- [ ] Comparar contra el clasificador actual (`get_category_from_jev`) en precisión, latencia y costo; si gana, evaluar usarlo como alternativa local.
 
 ## Fase 10 — Despliegue a la nube (AWS) con Jenkins ⏳
 Objetivo: promover a producción en AWS la misma imagen ya probada en el servidor local, y **poner en práctica Lambda, API Gateway, SQS, SNS, EKS, EC2 y S3** con usos reales del proyecto. Va antes de la mensajería porque los webhooks de Meta necesitan HTTPS público.
