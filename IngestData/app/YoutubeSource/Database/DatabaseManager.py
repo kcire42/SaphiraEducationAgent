@@ -206,6 +206,31 @@ def get_video_metadata(video_id):
 		conn.close()
 
 
+def get_video_status(video_id):
+	"""
+	Obtiene el estado actual del video en el pipeline (youtube.processing).
+
+	Returns:
+		str con el nombre del estado, o None si el video no está registrado o hay un error.
+	"""
+	conn = get_connection()
+	try:
+		with conn.cursor() as cur:
+			cur.execute("""
+						SELECT
+						"youtube".get_video_status(
+						p_video_id := %s::text
+						)""", (video_id,))
+			video_status = cur.fetchone()[0]
+		logger.debug("✅ Estado obtenido para '%s': %s", video_id, video_status)
+		return video_status
+	except Exception:
+		logger.exception("❌ Error al obtener el estado para '%s'", video_id)
+		return None
+	finally:
+		conn.close()
+
+
 def get_video_content(video_id):
 	"""
 	Obtiene el contenido de un video desde la base de datos.

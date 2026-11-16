@@ -1,6 +1,6 @@
 # PLAN — Saphira, asistente personal de IA
 
-**Última actualización:** 2026-11-15
+**Última actualización:** 2026-11-16
 
 Estados: ✅ completada · 🚧 en curso · ⏳ pendiente
 
@@ -66,9 +66,9 @@ Estados: ✅ completada · 🚧 en curso · ⏳ pendiente
 - [x] Script para regresar un video a un estado anterior y reprocesarlo desde ahí (cualquier etapa, no solo `category`):
   - SP `youtube.reset_youtube_ingestion(p_video_id, p_status)` en `R__ResetYoutubeIngestion.sql`. Valida que el video exista y que el estado destino sea anterior al actual (el enum es ordenado, así que basta con comparar con `<`). También permite salir de `error`.
   - Wrapper `reset_youtube_ingestion(video_id, status)` en `DatabaseManager.py`.
-  - CLI `docker exec ingest_data python -m app.reset_video --video-id <id> [--video-id <id> ...] --status <estado>`, que muestra el estado anterior y el nuevo.
-  - Opcional: limpiar los datos derivados de las etapas posteriores (por ejemplo, regresar a `processed` reinicia `summary` y `category`).
-- [ ] Recategorizar los videos existentes con la nueva lista (con el script anterior, regresándolos a `summary`).
+  - CLI `docker exec ingest_data python -m app.reset_video --video-id <id> [--video-id <id> ...] --status <estado>` (nombre o código), que muestra el estado anterior y el nuevo. Reutiliza `return_status_youtube_ingestion` (`IntegrityData/utilities.py`) y la función `youtube.get_video_status`.
+- [x] Pruebas con pytest en `IngestData/tests/` (unitarias con mocks e integración con la BD, marcador `integration`): `docker exec ingest_data python -m pytest -v`.
+- [x] Recategorizar los videos existentes con la nueva lista (con el script anterior, regresándolos a `summary`).
 - [ ] Vectorizar el resumen y la transcripción en `youtube.content` (pgvector, `output_dimensionality=1536`) → estado `vector`.
 - [ ] Cargar los chunks a Qdrant (colección por categoría o con metadata) para el RAG → estado `learning`.
 - [ ] Marcar `completed` y permitir preguntar sobre los videos desde `/ws/llm`.
@@ -284,3 +284,5 @@ Encaja mejor después de Airflow (Fase 4) y antes o junto con la plataforma de d
 - [x] Logging configurado en `IngestData` (`LOG_LEVEL`, por defecto `DEBUG`).
 - [x] Puerto de Postgres en el host cambiado a `127.0.0.1:5434` (el 5433 lo usa otro proyecto).
 - [ ] `IngestData` actualizado a Python 3.12 (igual que `Backend`): falta reconstruir la imagen y validar Whisper.
+- [ ] Al regresar un video con `reset_video`, limpiar los datos derivados de las etapas posteriores (por ejemplo, regresar a `processed` reinicia `summary` y `category`).
+- [ ] `pytest` está en `IngestData/requirements.txt`, pero solo se instaló con `pip` en el contenedor: falta reconstruir la imagen.
